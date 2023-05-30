@@ -1,18 +1,40 @@
 package main
 
 import (
-	"log"
-	"os"
+	"fmt"
 
-	"samroehrich/training-freaks/gpx"
+	"samroehrich/training-freaks/db"
+
+	_ "github.com/lib/pq"
 )
 
-func main() {
-		data, err := os.ReadFile("sample-gpx/power.gpx")
+func oldmain() {
+
+		fmt.Println("main service started...")
+		
+		d, err := db.CreateConnection()
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("DB connection error")
+			return
 		}
-		
-		gpx.ParseFile(data)
-}
+
+		fmt.Println("Connected to database.")
+
+		row, err := d.Query("SELECT * FROM activity WHERE name='first'")
+
+		if err != nil {
+			fmt.Println("Error Select * from activity")
+		}
+
+		var name string
+		var details string
+		var category string
+
+		for row.Next() {
+			row.Scan(&name, &details, &category)
+		}
+
+		fmt.Println(name, "name")
+		fmt.Println(details, "details")
+	}
