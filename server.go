@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"samroehrich/training-freaks/db"
 	"samroehrich/training-freaks/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -18,11 +19,19 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
-
+	db, err := db.CreateConnection()
+	
+	if err != nil {
+		log.Fatal("Unable to establish database connection...")
+	}
+	
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}}))
+	
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
-
+	
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+
+	defer db.Close()
 }

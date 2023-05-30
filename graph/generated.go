@@ -45,10 +45,10 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Activity struct {
-		Category func(childComplexity int) int
-		Details  func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
+		Details func(childComplexity int) int
+		ID      func(childComplexity int) int
+		Name    func(childComplexity int) int
+		Type    func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -82,13 +82,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Activity.category":
-		if e.complexity.Activity.Category == nil {
-			break
-		}
-
-		return e.complexity.Activity.Category(childComplexity), true
-
 	case "Activity.details":
 		if e.complexity.Activity.Details == nil {
 			break
@@ -109,6 +102,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Activity.Name(childComplexity), true
+
+	case "Activity.type":
+		if e.complexity.Activity.Type == nil {
+			break
+		}
+
+		return e.complexity.Activity.Type(childComplexity), true
 
 	case "Mutation.createActivity":
 		if e.complexity.Mutation.CreateActivity == nil {
@@ -437,8 +437,8 @@ func (ec *executionContext) fieldContext_Activity_details(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Activity_category(ctx context.Context, field graphql.CollectedField, obj *model.Activity) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Activity_category(ctx, field)
+func (ec *executionContext) _Activity_type(ctx context.Context, field graphql.CollectedField, obj *model.Activity) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Activity_type(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -451,7 +451,7 @@ func (ec *executionContext) _Activity_category(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Category, nil
+		return obj.Type, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -468,7 +468,7 @@ func (ec *executionContext) _Activity_category(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Activity_category(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Activity_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Activity",
 		Field:      field,
@@ -523,8 +523,8 @@ func (ec *executionContext) fieldContext_Mutation_createActivity(ctx context.Con
 				return ec.fieldContext_Activity_name(ctx, field)
 			case "details":
 				return ec.fieldContext_Activity_details(ctx, field)
-			case "category":
-				return ec.fieldContext_Activity_category(ctx, field)
+			case "type":
+				return ec.fieldContext_Activity_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Activity", field.Name)
 		},
@@ -585,8 +585,8 @@ func (ec *executionContext) fieldContext_Query_activity(ctx context.Context, fie
 				return ec.fieldContext_Activity_name(ctx, field)
 			case "details":
 				return ec.fieldContext_Activity_details(ctx, field)
-			case "category":
-				return ec.fieldContext_Activity_category(ctx, field)
+			case "type":
+				return ec.fieldContext_Activity_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Activity", field.Name)
 		},
@@ -2593,9 +2593,9 @@ func (ec *executionContext) _Activity(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "category":
+		case "type":
 
-			out.Values[i] = ec._Activity_category(ctx, field, obj)
+			out.Values[i] = ec._Activity_type(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

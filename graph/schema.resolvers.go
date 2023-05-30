@@ -18,8 +18,20 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 // Activity is the resolver for the activity field.
 func (r *queryResolver) Activity(ctx context.Context, id *string) (*model.Activity, error) {
 
+	err := r.DB.Ping()
+
+	if err != nil {
+		fmt.Println("nop")
+	}
+	fmt.Println("yep")
+	return &model.Activity{
+		Name: "yeet",
+	}, nil
 }
 
+func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, error) {
+	panic(fmt.Errorf("goofing"))
+	} 
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
@@ -28,4 +40,4 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver}

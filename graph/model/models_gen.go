@@ -3,10 +3,10 @@
 package model
 
 type Activity struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Details  string `json:"details"`
-	Category string `json:"category"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Details string `json:"details"`
+	Type    string `json:"type"`
 }
 
 type ActivityInput struct {
