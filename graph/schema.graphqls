@@ -2,8 +2,11 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar Upload
+
 type Query {
 	activity(name: String!): Activity
+	activities: [Activity!]!
 }
 
 type Mutation {
@@ -18,6 +21,7 @@ type Activity {
 }
 
 input ActivityInput {
+	file: Upload!
 	name: String!
 	details: String!
 	category: String!

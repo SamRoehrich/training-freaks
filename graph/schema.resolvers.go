@@ -16,7 +16,7 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 }
 
 // Activity is the resolver for the activity field.
-func (r *queryResolver) Activity(ctx context.Context, name *string) (*model.Activity, error) {
+func (r *queryResolver) Activity(ctx context.Context, name string) (*model.Activity, error) {
 	err := r.DB.Ping()
 	if err != nil {
 		fmt.Println("nop")
@@ -40,10 +40,34 @@ func (r *queryResolver) Activity(ctx context.Context, name *string) (*model.Acti
 	return &activity, nil
 }
 
-
+// Activities is the resolver for the activities field.
 func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, error) {
-	panic(fmt.Errorf("goofing"))
-	} 
+	err := r.DB.Ping()
+	if err != nil {
+		fmt.Println("nop")
+		return nil, err
+	}
+
+	res, err := r.DB.Query("SELECT * FROM activity")
+	if err != nil {
+		return nil, err
+	}
+	defer res.Close()
+
+	var activities []*model.Activity
+	if res.Next() {
+		var activity model.Activity
+		err := res.Scan(&activity.Type, &activity.Details, &activity.Name)
+
+		if err != nil {
+			return nil, err
+		}
+
+		activities = append(activities, &activity)
+	}
+
+	return activities, nil
+}
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
@@ -52,4 +76,4 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver}
+type queryResolver struct{ *Resolver }
