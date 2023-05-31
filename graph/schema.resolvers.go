@@ -16,18 +16,30 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 }
 
 // Activity is the resolver for the activity field.
-func (r *queryResolver) Activity(ctx context.Context, id *string) (*model.Activity, error) {
-
+func (r *queryResolver) Activity(ctx context.Context, name *string) (*model.Activity, error) {
 	err := r.DB.Ping()
-
 	if err != nil {
 		fmt.Println("nop")
 	}
-	fmt.Println("yep")
-	return &model.Activity{
-		Name: "yeet",
-	}, nil
+
+	res, err := r.DB.Query("SELECT * FROM activity WHERE name = ?", &name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Close()
+	var activity model.Activity
+	if res.Next() {
+		err := res.Scan(&activity.Name, &activity.Details, &activity.Type)
+		if err != nil {
+			return nil, err
+		}
+		return &activity, nil
+	}
+	return &activity, nil
 }
+
 
 func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, error) {
 	panic(fmt.Errorf("goofing"))

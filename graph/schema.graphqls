@@ -3,7 +3,7 @@
 # https://gqlgen.com/getting-started/
 
 type Query {
-	activity(id: ID): Activity
+	activity(name: String!): Activity
 }
 
 type Mutation {
