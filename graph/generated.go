@@ -63,7 +63,7 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateActivity(ctx context.Context, input model.ActivityInput) (*model.Activity, error)
+	CreateActivity(ctx context.Context, input model.ActivityInput) (*bool, error)
 }
 type QueryResolver interface {
 	Activity(ctx context.Context, name string) (*model.Activity, error)
@@ -514,9 +514,9 @@ func (ec *executionContext) _Mutation_createActivity(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Activity)
+	res := resTmp.(*bool)
 	fc.Result = res
-	return ec.marshalOActivity2ᚖsamroehrichᚋtrainingᚑfreaksᚋgraphᚋmodelᚐActivity(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createActivity(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -526,17 +526,7 @@ func (ec *executionContext) fieldContext_Mutation_createActivity(ctx context.Con
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Activity_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Activity_name(ctx, field)
-			case "details":
-				return ec.fieldContext_Activity_details(ctx, field)
-			case "type":
-				return ec.fieldContext_Activity_type(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Activity", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -2578,22 +2568,13 @@ func (ec *executionContext) unmarshalInputActivityInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"file", "name", "details", "category"}
+	fieldsInOrder := [...]string{"name", "details", "category"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "file":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
-			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.File = data
 		case "name":
 			var err error
 
@@ -3219,21 +3200,6 @@ func (ec *executionContext) unmarshalNString2string(ctx context.Context, v inter
 
 func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalString(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
-	res, err := graphql.UnmarshalUpload(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
-	res := graphql.MarshalUpload(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")

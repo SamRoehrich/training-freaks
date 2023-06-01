@@ -10,7 +10,7 @@ type Query {
 }
 
 type Mutation {
-	createActivity(input: ActivityInput!): Activity
+	createActivity(input: ActivityInput!): Boolean
 }
 
 type Activity {
@@ -21,7 +21,6 @@ type Activity {
 }
 
 input ActivityInput {
-	file: Upload!
 	name: String!
 	details: String!
 	category: String!

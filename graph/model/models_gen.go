@@ -2,10 +2,6 @@
 
 package model
 
-import (
-	"github.com/99designs/gqlgen/graphql"
-)
-
 type Activity struct {
 	ID      string `json:"id"`
 	Name    string `json:"name"`
@@ -14,8 +10,7 @@ type Activity struct {
 }
 
 type ActivityInput struct {
-	File     graphql.Upload `json:"file"`
-	Name     string         `json:"name"`
-	Details  string         `json:"details"`
-	Category string         `json:"category"`
+	Name     string `json:"name"`
+	Details  string `json:"details"`
+	Category string `json:"category"`
 }

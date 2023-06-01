@@ -11,8 +11,21 @@ import (
 )
 
 // CreateActivity is the resolver for the createActivity field.
-func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*model.Activity, error) {
-	panic(fmt.Errorf("not implemented: CreateActivity - createActivity"))
+func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*bool, error) {
+	err := r.DB.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := r.DB.Exec("INSERT INTO activity (name, type, details) VALUES ('hiuhiuohi', '1', 'details')")
+
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(res.RowsAffected())
+	s := true
+	return &s, err
 }
 
 // Activity is the resolver for the activity field.
@@ -55,7 +68,7 @@ func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, erro
 	defer res.Close()
 
 	var activities []*model.Activity
-	if res.Next() {
+	for res.Next() {
 		var activity model.Activity
 		err := res.Scan(&activity.Type, &activity.Details, &activity.Name)
 
@@ -63,6 +76,7 @@ func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, erro
 			return nil, err
 		}
 
+		fmt.Println(activity.Name)
 		activities = append(activities, &activity)
 	}
 
