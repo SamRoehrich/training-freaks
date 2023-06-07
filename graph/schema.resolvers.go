@@ -16,8 +16,13 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(input.Category, "input")
+	stmt, err := r.DB.Prepare("INSERT INTO activity (name, details, type) VALUES ($1, $2, $3)")
 
-	res, err := r.DB.Exec("INSERT INTO activity (name, type, details) VALUES ('hiuhiuohi', '1', 'details')")
+	if err != nil {
+		return nil, err
+	}
+	res, err := stmt.Exec(input.Name, input.Details, "strength")
 
 	if err != nil {
 		return nil, err
@@ -76,7 +81,6 @@ func (r *queryResolver) Activities(ctx context.Context) ([]*model.Activity, erro
 			return nil, err
 		}
 
-		fmt.Println(activity.Name)
 		activities = append(activities, &activity)
 	}
 
