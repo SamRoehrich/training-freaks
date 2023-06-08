@@ -11,6 +11,7 @@ type Query {
 
 type Mutation {
 	createActivity(input: ActivityInput!): Boolean
+	joinWaitlist(input: WaitlistInput!): Boolean
 }
 
 type Activity {
@@ -22,6 +23,10 @@ type Activity {
 
 input ActivityInput {
 	name: String!
-	details: String!
+	upload: Upload!
 	category: String!
+}
+
+input WaitlistInput {
+	email: String!
 }

@@ -54,6 +54,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateActivity func(childComplexity int, input model.ActivityInput) int
+		JoinWaitlist   func(childComplexity int, input model.WaitlistInput) int
 	}
 
 	Query struct {
@@ -64,6 +65,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateActivity(ctx context.Context, input model.ActivityInput) (*bool, error)
+	JoinWaitlist(ctx context.Context, input model.WaitlistInput) (*bool, error)
 }
 type QueryResolver interface {
 	Activity(ctx context.Context, name string) (*model.Activity, error)
@@ -125,6 +127,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateActivity(childComplexity, args["input"].(model.ActivityInput)), true
 
+	case "Mutation.joinWaitlist":
+		if e.complexity.Mutation.JoinWaitlist == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_joinWaitlist_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.JoinWaitlist(childComplexity, args["input"].(model.WaitlistInput)), true
+
 	case "Query.activities":
 		if e.complexity.Query.Activities == nil {
 			break
@@ -153,6 +167,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputActivityInput,
+		ec.unmarshalInputWaitlistInput,
 	)
 	first := true
 
@@ -239,6 +254,21 @@ func (ec *executionContext) field_Mutation_createActivity_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNActivityInput2samroehrichᚋtrainingᚑfreaksᚋgraphᚋmodelᚐActivityInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_joinWaitlist_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.WaitlistInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNWaitlistInput2samroehrichᚋtrainingᚑfreaksᚋgraphᚋmodelᚐWaitlistInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -537,6 +567,58 @@ func (ec *executionContext) fieldContext_Mutation_createActivity(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createActivity_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_joinWaitlist(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_joinWaitlist(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().JoinWaitlist(rctx, fc.Args["input"].(model.WaitlistInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_joinWaitlist(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_joinWaitlist_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2568,7 +2650,7 @@ func (ec *executionContext) unmarshalInputActivityInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "details", "category"}
+	fieldsInOrder := [...]string{"name", "upload", "category"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -2584,15 +2666,15 @@ func (ec *executionContext) unmarshalInputActivityInput(ctx context.Context, obj
 				return it, err
 			}
 			it.Name = data
-		case "details":
+		case "upload":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("details"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upload"))
+			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Details = data
+			it.Upload = data
 		case "category":
 			var err error
 
@@ -2602,6 +2684,35 @@ func (ec *executionContext) unmarshalInputActivityInput(ctx context.Context, obj
 				return it, err
 			}
 			it.Category = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputWaitlistInput(ctx context.Context, obj interface{}) (model.WaitlistInput, error) {
+	var it model.WaitlistInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
 		}
 	}
 
@@ -2688,6 +2799,12 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createActivity(ctx, field)
+			})
+
+		case "joinWaitlist":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_joinWaitlist(ctx, field)
 			})
 
 		default:
@@ -3206,6 +3323,26 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, v interface{}) (graphql.Upload, error) {
+	res, err := graphql.UnmarshalUpload(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	res := graphql.MarshalUpload(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNWaitlistInput2samroehrichᚋtrainingᚑfreaksᚋgraphᚋmodelᚐWaitlistInput(ctx context.Context, v interface{}) (model.WaitlistInput, error) {
+	res, err := ec.unmarshalInputWaitlistInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
