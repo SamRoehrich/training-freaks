@@ -29,7 +29,6 @@ func (r *mutationResolver) JoinWaitlist(ctx context.Context, input model.Waitlis
 		return &s ,err
 	}
 
-	fmt.Println("email", input.Email)
 	_, err = q.Exec(input.Email)
 
 	if err != nil {
