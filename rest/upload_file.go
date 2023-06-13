@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/service/s3"
+	// "github.com/aws/aws-sdk-go-v2/aws"
+	// "github.com/aws/aws-sdk-go/aws/credentials"
+	// "github.com/aws/aws-sdk-go/service/s3"
 )
 
 // UploadFile writes a file to the system
@@ -47,7 +46,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("TEmp File creation successful")
 
 
-	err = uploadToS3(&fileBytes)
+	// err = uploadToS3(&fileBytes)
 
 	if err != nil {
 		fmt.Println("from the caller, you failed")
@@ -58,42 +57,42 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 // TODO - fix this
 // TODO - don't hardcode this
-func uploadToS3(b *[]byte) error {
-	creds := credentials.NewStaticCredentials("", "asdf", "asdf")
-	provider := aws.CredentialsProvider(creds)
-	if err != nil {
-		fmt.Println("fuck me")
-		return err
-	}
+// func uploadToS3(b *[]byte) error {
+// 	creds := credentials.NewStaticCredentials("", "asdf", "asdf")
+// 	provider := aws.CredentialsProvider(creds)
+// 	if err != nil {
+// 		fmt.Println("fuck me")
+// 		return err
+// 	}
 
-	config := &aws.Config{
-		Region: "us-east-1",
-		Credentials: provider,
-	}
-	// sess, err := session.NewSession(config)
+// 	config := &aws.Config{
+// 		Region: "us-east-1",
+// 		Credentials: provider,
+// 	}
+// 	// sess, err := session.NewSession(config)
 	
 	
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	svc := s3.New(sess)
+// 	svc := s3.New(sess)
 
-	input := &s3.PutObjectInput{
-		Bucket: aws.String("training-freaks"),
-		Key: aws.String("first.gpx"),
-		Body: b,
-	}
+// 	input := &s3.PutObjectInput{
+// 		Bucket: aws.String("training-freaks"),
+// 		Key: aws.String("first.gpx"),
+// 		Body: b,
+// 	}
 
-	_, err = svc.PutObject(input)
+// 	_, err = svc.PutObject(input)
 
-	if err != nil {
-		fmt.Println("error uploading to S3")
-		return err
-	}
+// 	if err != nil {
+// 		fmt.Println("error uploading to S3")
+// 		return err
+// 	}
 
-	fmt.Println("yeahhhhhh")
-	return nil
+// 	fmt.Println("yeahhhhhh")
+// 	return nil
 
 
-}
+// }

@@ -6,10 +6,10 @@ import (
 
 	_ "github.com/lib/pq"
 )
-var	connStr = "postgres://default:I4fjAJke6pBo@ep-odd-wildflower-707311.us-west-2.postgres.vercel-storage.com:5432/verceldb"
+var	connStr = "postgres://default:WxU8nqpC1uVa@ep-cool-firefly-492956.us-west-2.postgres.vercel-storage.com:5432/verceldb"
 
+// CreateConnection creates a db connection
 func CreateConnection() (*sql.DB, error) {
-
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
@@ -24,5 +24,6 @@ func CreateConnection() (*sql.DB, error) {
 		return nil, err
 	}
 
+	err = Seed(db)
 	return db, nil
 }

@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS "user" (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS activity (
+    id SERIAL PRIMARY KEY,
+    likes INT
+);
+
+CREATE TABLE IF NOT EXISTS track (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    uploaded_at TIMESTAMP,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    type VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS "point" (
+    id SERIAL PRIMARY KEY,
+    lat VARCHAR(255),
+    lon VARCHAR(255)
+);
