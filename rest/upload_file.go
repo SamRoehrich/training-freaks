@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-// Upload file writes a file to the system
+// UploadFile writes a file to the system
 // TODO - swap implementation to upload file to external storage
 func UploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Initiating the file upload... ")
@@ -38,8 +42,58 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO - remove the temp file
 	tFile.Write(fileBytes)
-	fmt.Println("File upload successful")
+	fmt.Println("TEmp File creation successful")
 
+
+	err = uploadToS3(&fileBytes)
+
+	if err != nil {
+		fmt.Println("from the caller, you failed")
+	}
+	
 	w.WriteHeader(200)
+}
+
+// TODO - fix this
+// TODO - don't hardcode this
+func uploadToS3(b *[]byte) error {
+	creds := credentials.NewStaticCredentials("", "asdf", "asdf")
+	provider := aws.CredentialsProvider(creds)
+	if err != nil {
+		fmt.Println("fuck me")
+		return err
+	}
+
+	config := &aws.Config{
+		Region: "us-east-1",
+		Credentials: provider,
+	}
+	// sess, err := session.NewSession(config)
+	
+	
+	if err != nil {
+		return err
+	}
+
+	svc := s3.New(sess)
+
+	input := &s3.PutObjectInput{
+		Bucket: aws.String("training-freaks"),
+		Key: aws.String("first.gpx"),
+		Body: b,
+	}
+
+	_, err = svc.PutObject(input)
+
+	if err != nil {
+		fmt.Println("error uploading to S3")
+		return err
+	}
+
+	fmt.Println("yeahhhhhh")
+	return nil
+
+
 }
