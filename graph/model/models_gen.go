@@ -14,9 +14,7 @@ type Activity struct {
 }
 
 type ActivityInput struct {
-	Name     string         `json:"name"`
-	Upload   graphql.Upload `json:"upload"`
-	Category string         `json:"category"`
+	File graphql.Upload `json:"file"`
 }
 
 type WaitlistInput struct {

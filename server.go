@@ -9,6 +9,8 @@ import (
 	"samroehrich/training-freaks/rest"
 
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/extension"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 )
 
@@ -26,7 +28,16 @@ func main() {
 		log.Fatal("Unable to establish database connection...")
 	}
 	
+	var mb int64 = 1 << 20
+
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{DB: db}}))
+	srv.AddTransport(transport.POST{})
+	srv.AddTransport(transport.MultipartForm{
+		MaxMemory: 32 * mb,
+		MaxUploadSize: 50 * mb,
+	})
+
+	srv.Use(extension.Introspection{})
 	
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
