@@ -6,9 +6,10 @@ package graph
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
+	"samroehrich/training-freaks/db"
 	"samroehrich/training-freaks/gpx"
 	"samroehrich/training-freaks/graph/model"
 )
@@ -26,18 +27,24 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 	content, err := io.ReadAll(input.File.File)
 
 	if err != nil {
+		fmt.Println("failed to read file")
 		return nil, err
 	}
 
-	var t gpx.Track
+	var t gpx.GPX
 
-	err = json.Unmarshal(content, &t)
+	err = xml.Unmarshal(content, &t)
 
+	if err != nil {
+		fmt.Println("failed to parse json")
+		return nil, err
+	}
+
+	fmt.Println(t.Creator)
+	err = db.InsertGpxData(&t, r.DB)
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println(t.Name)
 	return &s, nil
 }
 
@@ -57,6 +64,18 @@ func (r *mutationResolver) JoinWaitlist(ctx context.Context, input model.Waitlis
 	}
 
 	s = true
+	return &s, nil
+}
+
+// DropTables is the resolver for the dropTables field.
+func (r *mutationResolver) DropTables(ctx context.Context) (*bool, error) {
+	s := true
+	err := db.DropGpxTables(r.DB)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &s, nil
 }
 

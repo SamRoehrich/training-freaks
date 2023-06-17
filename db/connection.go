@@ -25,5 +25,10 @@ func CreateConnection() (*sql.DB, error) {
 	}
 
 	err = Seed(db)
+
+	if err != nil {
+		fmt.Println(err)
+		panic("Failed to properly seed database")
+	}
 	return db, nil
 }

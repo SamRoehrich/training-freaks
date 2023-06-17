@@ -1,5 +1,5 @@
 # GraphQL schema example
-#
+# go run github.com/99designs/gqlgen gen
 # https://gqlgen.com/getting-started/
 
 scalar Upload
@@ -12,6 +12,7 @@ type Query {
 type Mutation {
 	createActivity(input: ActivityInput!): Boolean
 	joinWaitlist(input: WaitlistInput!): Boolean
+	dropTables: Boolean
 }
 
 type Activity {
