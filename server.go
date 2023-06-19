@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -24,7 +25,9 @@ func main() {
 
 	db, err := db.CreateConnection()
 	
+	defer db.Close()
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal("Unable to establish database connection...")
 	}
 	

@@ -10,9 +10,13 @@ type Query {
 }
 
 type Mutation {
-	createActivity(input: ActivityInput!): Int
+	createActivity(input: ActivityInput!): CreateActivityReturn!
 	joinWaitlist(input: WaitlistInput!): Boolean
 	dropTables: Boolean
+}
+
+type CreateActivityReturn {
+	id: Int!
 }
 
 type Activity {

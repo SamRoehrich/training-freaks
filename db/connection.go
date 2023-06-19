@@ -3,20 +3,27 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
-var	connStr = "postgres://default:WxU8nqpC1uVa@ep-cool-firefly-492956.us-west-2.postgres.vercel-storage.com:5432/verceldb"
 
 // CreateConnection creates a db connection
 func CreateConnection() (*sql.DB, error) {
-	db, err := sql.Open("postgres", connStr)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading environment variables")
+	}
+
+	dsn := os.Getenv("DSN") 
+	db, err := sql.Open("mysql", dsn)
 
 	if err != nil {
 		fmt.Println("Error connecting to database")
 		return nil, err
 	}
-
 	err = db.Ping()
 
 	if err != nil {
@@ -30,5 +37,6 @@ func CreateConnection() (*sql.DB, error) {
 		fmt.Println(err)
 		panic("Failed to properly seed database")
 	}
+	fmt.Println("successfully connected to PlanetScale")
 	return db, nil
 }

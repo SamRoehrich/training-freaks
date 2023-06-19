@@ -20,7 +20,7 @@ func Seed(d *sql.DB) error {
 			description VARCHAR(255),
 			author VARCHAR(255),
 			time TIMESTAMP,
-			FOREIGN KEY (gpx_id) REFERENCES gpx (id) ON DELETE CASCADE
+			KEY parent_table_id (gpx_id)	
 		)`,
 		`CREATE TABLE IF NOT EXISTS waypoints(
 			id SERIAL PRIMARY KEY,
@@ -29,19 +29,19 @@ func Seed(d *sql.DB) error {
 			longitude DOUBLE PRECISION,
 			elevation DOUBLE PRECISION,
 			name VARCHAR(255),
-			FOREIGN KEY (gpx_id) REFERENCES gpx (id) ON DELETE CASCADE
+			KEY parent_table_id (gpx_id)
 		)`,
 		`CREATE TABLE IF NOT EXISTS tracks(
 			id SERIAL PRIMARY KEY,
 			gpx_id INT,
 			name VARCHAR(255),
 			number INT,
-			FOREIGN KEY (gpx_id) REFERENCES gpx (id) ON DELETE CASCADE			
+			KEY parent_table_id (gpx_id)			
 		)`,
 		`CREATE TABLE IF NOT EXISTS segments (
 			id SERIAL PRIMARY KEY,
 			track_id INT,
-			FOREIGN KEY (track_id) REFERENCES tracks (id) ON DELETE CASCADE
+			KEY parent_table_id (track_id)
 		)`,
 		`CREATE TABLE IF NOT EXISTS track_points (
 			id SERIAL PRIMARY KEY,
@@ -50,7 +50,7 @@ func Seed(d *sql.DB) error {
 			longitude DOUBLE PRECISION,
 			elevation DOUBLE PRECISION,
 			time TIMESTAMP,
-			FOREIGN KEY (segment_id) REFERENCES segments (id) ON DELETE CASCADE
+			KEY parent_table_id (segment_id)
 		)`,
 		}
 
