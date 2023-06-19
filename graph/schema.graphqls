@@ -10,7 +10,7 @@ type Query {
 }
 
 type Mutation {
-	createActivity(input: ActivityInput!): Boolean
+	createActivity(input: ActivityInput!): Int
 	joinWaitlist(input: WaitlistInput!): Boolean
 	dropTables: Boolean
 }

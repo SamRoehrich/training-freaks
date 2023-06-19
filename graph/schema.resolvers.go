@@ -15,15 +15,11 @@ import (
 )
 
 // CreateActivity is the resolver for the createActivity field.
-func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*bool, error) {
+func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*int, error) {
 	err := r.DB.Ping()
-
 	if err != nil {
 		return nil, err
 	}
-	s := true
-	fmt.Println("upload", input.File.Filename)
-
 	content, err := io.ReadAll(input.File.File)
 
 	if err != nil {
@@ -32,20 +28,24 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 	}
 
 	var t gpx.GPX
+	var id int
 
 	err = xml.Unmarshal(content, &t)
-
 	if err != nil {
 		fmt.Println("failed to parse json")
 		return nil, err
 	}
 
-	fmt.Println(t.Creator)
-	err = db.InsertGpxData(&t, r.DB)
+	fmt.Println("Starting insert")
+
+	id, err = db.InsertGpxData(&t, r.DB)
 	if err != nil {
 		return nil, err
 	}
-	return &s, nil
+
+	fmt.Println("Create Activity completed... returning.")
+
+	return &id, nil
 }
 
 // JoinWaitlist is the resolver for the joinWaitlist field.
