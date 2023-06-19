@@ -17,6 +17,10 @@ type ActivityInput struct {
 	File graphql.Upload `json:"file"`
 }
 
+type CreateActivityReturn struct {
+	ID int `json:"id"`
+}
+
 type WaitlistInput struct {
 	Email string `json:"email"`
 }

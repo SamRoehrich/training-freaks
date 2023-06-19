@@ -15,7 +15,7 @@ import (
 )
 
 // CreateActivity is the resolver for the createActivity field.
-func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*int, error) {
+func (r *mutationResolver) CreateActivity(ctx context.Context, input model.ActivityInput) (*model.CreateActivityReturn, error) {
 	err := r.DB.Ping()
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 	}
 
 	var t gpx.GPX
-	var id int
+	var id int64
 
 	err = xml.Unmarshal(content, &t)
 	if err != nil {
@@ -44,8 +44,11 @@ func (r *mutationResolver) CreateActivity(ctx context.Context, input model.Activ
 	}
 
 	fmt.Println("Create Activity completed... returning.")
-
-	return &id, nil
+	intID := int(id)
+	ret := model.CreateActivityReturn{
+		ID: intID,
+	}
+	return &ret, nil
 }
 
 // JoinWaitlist is the resolver for the joinWaitlist field.
