@@ -45,7 +45,7 @@ func InsertGpxData(gpx *gpx.GPX, db *sql.DB) (int64, error) {
 	}
 
 	for _, track := range gpx.Tracks {
-		var trackID int64
+		var trackID, segmentID int64
 		res, err := db.Exec("INSERT INTO tracks (gpx_id, name, number) VALUES (?, ?, ?)",
 			gpxID, track.Name, track.Number)
 		if err != nil {
@@ -67,16 +67,16 @@ func InsertGpxData(gpx *gpx.GPX, db *sql.DB) (int64, error) {
 		}
 
 
-		// for _, segment := range track.Segments {
-		// 	for _, point := range segment.Points {
-		// 		fmt.Println("Points", len(segment.Points))
-		// 		_, err = db.Exec("INSERT INTO track_points (segment_id, latitude, longitude, elevation, time) VALUES (?, ?, ?, ?, ?)",
-		// 			segmentID, point.Latitude, point.Longitude, point.Elevation, point.Time)
-		// 		if err != nil {
-		// 			return gpxID, err
-		// 		}
-		// 	}
-		// }
+		for _, segment := range track.Segments {
+			for _, point := range segment.Points {
+				fmt.Println("Points", len(segment.Points))
+				_, err = db.Exec("INSERT INTO track_points (segment_id, latitude, longitude, elevation, time) VALUES (?, ?, ?, ?, ?)",
+					segmentID, point.Latitude, point.Longitude, point.Elevation, point.Time)
+				if err != nil {
+					return gpxID, err
+				}
+			}
+		}
 
 		// fmt.Println("inserting points")
 		// err = insertPoints(&track, &segmentID, db, 1000, 20)
